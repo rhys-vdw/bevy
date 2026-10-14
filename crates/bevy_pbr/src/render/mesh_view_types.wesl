@@ -36,6 +36,7 @@ struct DirectionalLight {
     /// 'flags' is a bit field indicating various options. u32 is 32 bits so we have up to 32 options.
     flags: u32,
     soft_shadow_size: f32,
+    soft_shadow_min_blur: f32,
     shadow_depth_bias: f32,
     shadow_normal_bias: f32,
     num_cascades: u32,

@@ -119,6 +119,7 @@ fn fetch_spot_shadow(
             frag_coord_xy,
             SPOT_SHADOW_TEXEL_SIZE,
             (*light).soft_shadow_size,
+            0.5,
         );
     }
 
@@ -207,6 +208,7 @@ fn sample_directional_cascade(
             frag_coord_xy,
             texel_size,
             (*light).soft_shadow_size,
+            (*light).soft_shadow_min_blur,
         );
     }
 

@@ -125,6 +125,7 @@ pub struct ExtractedDirectionalLight {
     pub cascades: EntityHashMap<Vec<Cascade>>,
     pub frusta: EntityHashMap<Vec<Frustum>>,
     pub soft_shadow_size: Option<f32>,
+    pub soft_shadow_min_blur: f32,
     /// True if this light is using two-phase occlusion culling.
     pub occlusion_culling: bool,
     pub sun_disk_angular_size: f32,
@@ -161,6 +162,7 @@ pub struct GpuDirectionalLight {
     dir_to_light: Vec3,
     flags: u32,
     soft_shadow_size: f32,
+    soft_shadow_min_blur: f32,
     shadow_depth_bias: f32,
     shadow_normal_bias: f32,
     num_cascades: u32,
@@ -873,6 +875,10 @@ pub fn extract_lights(
             soft_shadow_size: directional_light.soft_shadow_size,
             #[cfg(not(feature = "experimental_pbr_pcss"))]
             soft_shadow_size: None,
+            #[cfg(feature = "experimental_pbr_pcss")]
+            soft_shadow_min_blur: directional_light.soft_shadow_min_blur,
+            #[cfg(not(feature = "experimental_pbr_pcss"))]
+            soft_shadow_min_blur: 0.0,
             shadow_maps_enabled: directional_light.shadow_maps_enabled,
             contact_shadows_enabled: directional_light.contact_shadows_enabled,
             shadow_depth_bias: directional_light.shadow_depth_bias,
@@ -1821,6 +1827,7 @@ pub fn prepare_lights(
                 dir_to_light: light.transform.back().into(),
                 flags: flags.bits(),
                 soft_shadow_size: light.soft_shadow_size.unwrap_or_default(),
+                soft_shadow_min_blur: light.soft_shadow_min_blur,
                 shadow_depth_bias: light.shadow_depth_bias,
                 shadow_normal_bias: light.shadow_normal_bias,
                 num_cascades: num_cascades as u32,
