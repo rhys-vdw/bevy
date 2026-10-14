@@ -289,13 +289,15 @@ fn sample_shadow_map_pcss(
     frag_coord_xy: vec2<f32>,
     texel_size: f32,
     light_size: f32,
+    min_blur: f32,
 ) -> f32 {
     // Determine the average Z value of the closest blocker.
     let z_blocker = search_for_blockers_in_shadow_map(
         light_local, depth, array_index, texel_size, light_size);
 
-    // Don't let the blur size go below 0.5, or shadows will look unacceptably aliased.
-    let blur_size = max((z_blocker - depth) * light_size / depth, 0.5);
+    // Don't let the blur size go below 0.5, or shadows will look unacceptably aliased. The light
+    // may ask for more, to keep shadows soft where they meet their casters.
+    let blur_size = max((z_blocker - depth) * light_size / depth, max(min_blur, 0.5));
 
     // FIXME: We can't use Castano '13 here because that has a hard-wired fixed
     // size. So we instead use Jimenez '14 unconditionally. In the non-temporal

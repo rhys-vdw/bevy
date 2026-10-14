@@ -115,6 +115,18 @@ pub struct DirectionalLight {
     #[cfg(feature = "experimental_pbr_pcss")]
     pub soft_shadow_size: Option<f32>,
 
+    /// The least blur a soft shadow gets, where it meets the object casting
+    /// it. Only used if [`DirectionalLight::soft_shadow_size`] is set.
+    ///
+    /// Physically, a shadow is sharp where it touches its caster and blurs
+    /// further away. Raising this keeps it soft everywhere, which can suit a
+    /// stylized look. It's in the same units as the blur that
+    /// `soft_shadow_size` produces; the default,
+    /// [`DirectionalLight::DEFAULT_SOFT_SHADOW_MIN_BLUR`], is the least that
+    /// avoids aliasing, so lower values are clamped to it.
+    #[cfg(feature = "experimental_pbr_pcss")]
+    pub soft_shadow_min_blur: f32,
+
     /// Whether this directional light contributes diffuse lighting to meshes
     /// with lightmaps.
     ///
@@ -156,11 +168,17 @@ impl Default for DirectionalLight {
             affects_lightmapped_mesh_diffuse: true,
             #[cfg(feature = "experimental_pbr_pcss")]
             soft_shadow_size: None,
+            #[cfg(feature = "experimental_pbr_pcss")]
+            soft_shadow_min_blur: Self::DEFAULT_SOFT_SHADOW_MIN_BLUR,
         }
     }
 }
 
 impl DirectionalLight {
+    /// The default value of [`DirectionalLight::soft_shadow_min_blur`].
+    #[cfg(feature = "experimental_pbr_pcss")]
+    pub const DEFAULT_SOFT_SHADOW_MIN_BLUR: f32 = 0.5;
+
     /// The default value of [`DirectionalLight::shadow_depth_bias`].
     pub const DEFAULT_SHADOW_DEPTH_BIAS: f32 = 0.02;
     /// The default value of [`DirectionalLight::shadow_normal_bias`].
